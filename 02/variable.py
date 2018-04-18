@@ -7,21 +7,32 @@ class Graph:
     def __init__(self): # グラフを準備する
 
         self.value = tf.placeholder(tf.float32, shape=[]) # 数値のパラメーターのノード
-        self.matrix = tf.Variable(tf.zeros(dtype=tf.float32, shape=[5,5])) # 行列の変数
-        self.add = tf.add(self.matrix, self.value) # 追加のノード
-        self.assign = self.matrix.assign(self.add) # 行列の変数を設定する
+        self.variable = tf.Variable(tf.zeros(dtype=tf.float32, shape=[])) # 変数
+        self.add = tf.add(self.variable, self.value) # 追加のノード
+        self.assign = self.variable.assign(self.add) # 変数を設定する
         self.session = None
+
+        # Tensorboardの表示のため
+        tf.summary.scalar("variable", self.assign)
+        self.summary = tf.summary.merge_all()
+        self.step = 0
 
 
     def start(self): # セッションを始める
 
         self.session = tf.Session()
         self.session.run(tf.global_variables_initializer()) # 変数の初期化子
+
+        # Tensorboardの表示のため
+        self.writer = tf.summary.FileWriter("logs", self.session.graph)
         return self.session
 
     def run(self, value): # 追加のノードを実行する
-        r = self.session.run(self.assign, feed_dict={self.value: value})
-        return r
+        r, summary = self.session.run([self.assign, self.summary], feed_dict={self.value: value})
 
-    def write(self): # 表示のためにログを記録する
-        self.writer = tf.summary.FileWriter("logs", self.session.graph)
+        # Tensorboardの表示のため
+        self.writer.add_summary(summary, self.step)
+        self.writer.flush()
+        self.step += 1
+
+        return r
