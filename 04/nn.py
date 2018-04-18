@@ -6,16 +6,23 @@ class Graph:
 
 	def __init__(self):
 
-		self.inputs = tf.placeholder(tf.float32, shape=[None, 2])
+		# 実際の状態
 		self.labels = tf.placeholder(tf.float32, shape=[None, 1])
 
-		self.layer1 = tf.layers.dense(self.inputs, 16, activation=tf.nn.sigmoid)
-		self.outputs = tf.layers.dense(self.layer1, 1, activation=tf.nn.sigmoid)
+		# 入力層
+		self.inputs = tf.placeholder(tf.float32, shape=[None, 2])
 
-		# 最低にしたい対象
+		# 隠れそう
+		self.layer1 = tf.layers.dense(self.inputs, 16, activation=tf.nn.relu)
+		self.layer2 = tf.layers.dense(self.layer1, 16, activation=tf.nn.relu)
+
+		# 出力層/予測する状態
+		self.outputs = tf.layers.dense(self.layer2, 1, activation=tf.nn.sigmoid)
+
+		# エラー率
 		self.cost = tf.losses.log_loss(self.outputs, self.labels)
-		# 変数を変えて対象を最低にするオプティマイザ
-		self.optim = tf.train.AdamOptimizer(0.01).minimize(self.cost)
+		# 変数を変えてエラー率を最低にするオプティマイザ
+		self.optim = tf.train.AdamOptimizer(0.005).minimize(self.cost)
 
 		self.session = None
 
@@ -28,10 +35,10 @@ class Graph:
 	def train(self, inputs, labels): # 学習する
 		self.session.run(self.optim, feed_dict={self.inputs: inputs, self.labels: labels})
 
-	def getCost(self, inputs, labels): # 学習する
+	def getCost(self, inputs, labels): # 現在のエラー率を計算する
 		return self.session.run(self.cost, feed_dict={self.inputs: inputs, self.labels: labels})
 
-	def prediction(self, inputs):
+	def prediction(self, inputs): # 状態を予測する
 		return self.session.run([self.outputs], feed_dict={self.inputs: inputs})
 
 	def write(self): # 表示のためにログを記録する

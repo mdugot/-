@@ -1,7 +1,6 @@
 import nn
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn import svm, datasets
 
 class Plot:
 
@@ -9,7 +8,7 @@ class Plot:
 		return self.G.prediction([[x,y]])[0][0,0]
 	
 	def contour(self):
-		r = np.arange(-1, 1, 0.1)
+		r = np.arange(-1, 1, 0.05)
 		l = len(r)
 		c_x, c_y = np.meshgrid(r, r)
 		c_z = np.zeros([l,l])
