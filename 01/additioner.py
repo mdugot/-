@@ -14,8 +14,8 @@ class Graph:
 
     def start(self): # セッションを始める
 
-        self.writer = tf.summary.FileWriter("logs", self.session.graph) # 表示のためにログを記録する
         self.session = tf.Session()
+        self.writer = tf.summary.FileWriter("logs", self.session.graph) # 表示のためにログを記録する
         return self.session
 
     def run(self, matrix): # 追加のノードを実行する
