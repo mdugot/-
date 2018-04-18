@@ -1,0 +1,4 @@
+url : http://btsd.ethz.ch/shareddata/
+
+training data = BelgiumTSC_Training (171.3MBytes)
+testing data =  BelgiumTSC_Testing (76.5MBytes)
